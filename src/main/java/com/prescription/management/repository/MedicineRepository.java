@@ -12,6 +12,6 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
     Medicine findByIdAndMedicineReferenceNumber(long medicineId, String medicineReferenceNumber);
 
-    @Query("FROM Medicine m WHERE m.activeIngredientName = activeIngredientName OR m.brandName = ?2")
+    @Query("FROM Medicine m WHERE m.activeIngredientName = ?1 OR m.brandName = ?2")
     Medicine findDuplicate(String activeIngredientName, String brandName);
 }

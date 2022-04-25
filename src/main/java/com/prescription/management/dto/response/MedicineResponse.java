@@ -15,7 +15,7 @@ public class MedicineResponse {
 
     private String activeIngredientName;
 
-    private int quantity;
+    private long quantity;
 
     private String unit;
 }

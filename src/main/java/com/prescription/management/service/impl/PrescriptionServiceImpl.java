@@ -173,6 +173,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 .medicines(prescription.getPrescriptionItems().stream()
                         .map(prescriptionItem -> MedicineResponse.builder()
                                 .medicineId(prescriptionItem.getMedicine().getId())
+                                .brandName(prescriptionItem.getMedicine().getBrandName())
+                                .activeIngredientName(prescriptionItem.getMedicine().getActiveIngredientName())
                                 .medicineReferenceNumber(prescriptionItem.getMedicine().getMedicineReferenceNumber())
                                 .quantity(prescriptionItem.getQuantity())
                                 .build())

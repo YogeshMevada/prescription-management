@@ -9,12 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("api/v1")
 public class MedicineController {
@@ -28,7 +31,7 @@ public class MedicineController {
 
     @Secured({"ROLE_ADMIN", "ROLE_DOCTOR"})
     @GetMapping(value = "/medicine/{medicineReferenceNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MedicineResponse> getMedicine(final String medicineReferenceNumber) throws Exception {
+    public ResponseEntity<MedicineResponse> getMedicine(@PathVariable @NotBlank(message = "Medicine reference number is mandatory") final String medicineReferenceNumber) throws Exception {
         log.info("Medicine controller - create medicine");
         return ResponseEntity.ok(medicineService.getMedicine(medicineReferenceNumber));
     }

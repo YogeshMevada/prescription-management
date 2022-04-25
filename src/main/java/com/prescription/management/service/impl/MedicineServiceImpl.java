@@ -1,6 +1,7 @@
 package com.prescription.management.service.impl;
 
 import com.prescription.management.constant.ResponseStatus;
+import com.prescription.management.constant.Unit;
 import com.prescription.management.dto.request.AddMedicineRequest;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.MedicineResponse;
@@ -32,8 +33,8 @@ public class MedicineServiceImpl implements MedicineService {
         log.info("Medicine service - get by medicine reference number");
         final Medicine medicine = medicineRepository.findByMedicineReferenceNumber(medicineReferenceNumber);
         if (Objects.isNull(medicine)) {
-            log.error("No medicines found");
-            throw new Exception("No medicines found");
+            log.error("No medicine found");
+            throw new Exception("No medicine found");
         }
         return map(medicine);
     }
@@ -82,7 +83,8 @@ public class MedicineServiceImpl implements MedicineService {
         medicine.setMedicineReferenceNumber(UUID.randomUUID().toString());
         medicine.setBrandName(addMedicineRequest.getBrandName());
         medicine.setActiveIngredientName(addMedicineRequest.getActiveIngredientName());
-        medicine.setUnit(addMedicineRequest.getUnit());
+        medicine.setQuantity(addMedicineRequest.getQuantity());
+        medicine.setUnit(Unit.getUnitBySymbol(addMedicineRequest.getUnit()));
         return medicine;
     }
 
@@ -92,7 +94,8 @@ public class MedicineServiceImpl implements MedicineService {
                 .medicineReferenceNumber(medicine.getMedicineReferenceNumber())
                 .brandName(medicine.getBrandName())
                 .activeIngredientName(medicine.getActiveIngredientName())
-                .unit(medicine.getUnit())
+                .quantity(medicine.getQuantity())
+                .unit(medicine.getUnit().getSymbol())
                 .build();
     }
 }

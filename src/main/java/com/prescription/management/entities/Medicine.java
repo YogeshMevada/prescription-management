@@ -1,10 +1,9 @@
 package com.prescription.management.entities;
 
+import com.prescription.management.constant.Unit;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -20,6 +19,10 @@ public class Medicine extends AuditModel {
     @Column(name = "active_ingredient_name", nullable = false)
     private String activeIngredientName;
 
+    @Column(name = "quantity", nullable = false)
+    private long quantity;
+
     @Column(name = "unit")
-    private String unit;
+    @Enumerated(EnumType.STRING)
+    private Unit unit;
 }
