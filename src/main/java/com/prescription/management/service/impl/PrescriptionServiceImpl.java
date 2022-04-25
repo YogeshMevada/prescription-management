@@ -3,8 +3,10 @@ package com.prescription.management.service.impl;
 import com.prescription.management.constant.ResponseStatus;
 import com.prescription.management.dto.request.AddPrescriptionRequest;
 import com.prescription.management.dto.request.MedicineRequest;
+import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.MedicineResponse;
+import com.prescription.management.dto.response.PageResponse;
 import com.prescription.management.dto.response.PrescriptionResponse;
 import com.prescription.management.entities.*;
 import com.prescription.management.repository.PrescriptionRepository;
@@ -12,9 +14,12 @@ import com.prescription.management.service.DoctorService;
 import com.prescription.management.service.MedicineService;
 import com.prescription.management.service.PatientService;
 import com.prescription.management.service.PrescriptionService;
+import com.prescription.management.util.CommonUtil;
 import com.prescription.management.validation.PrescriptionValidation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,6 +53,17 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
+    public PageResponse<PrescriptionResponse> getPrescriptions(final PageRequest pageRequest) throws Exception {
+        log.info("Prescription service - get all prescriptions");
+
+        final Pageable pageable = CommonUtil.getPageableInfo(pageRequest);
+        final Page<Prescription> prescriptions = prescriptionRepository.findAll(pageable);
+
+        log.info("Prescriptions found:{}", prescriptions.getSize());
+        return CommonUtil.createPageResponse(prescriptions, this::map);
+    }
+
+    @Override
     public Prescription findByReferenceNumber(final String prescriptionReferenceNumber) {
         log.info("Prescription service - get prescriptions by reference number");
         return prescriptionRepository.findByPrescriptionReferenceNumber(prescriptionReferenceNumber);
@@ -67,7 +83,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             throw new Exception("No prescriptions found for patient");
         }
         return prescriptions.stream()
-                .map(prescription -> map(prescription))
+                .map(this::map)
                 .collect(Collectors.toList());
     }
 

@@ -1,7 +1,9 @@
 package com.prescription.management.rest;
 
 import com.prescription.management.dto.request.AddPrescriptionRequest;
+import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.response.ApiResponse;
+import com.prescription.management.dto.response.PageResponse;
 import com.prescription.management.dto.response.PrescriptionResponse;
 import com.prescription.management.service.PrescriptionService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,13 @@ public class PrescriptionController {
     @Autowired
     public PrescriptionController(final PrescriptionService prescriptionService) {
         this.prescriptionService = prescriptionService;
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @GetMapping("/prescription")
+    public ResponseEntity<PageResponse<PrescriptionResponse>> getPrescriptions(@RequestBody @NotNull(message = "Page request is mandatory") final PageRequest pageRequest) throws Exception {
+        log.info("Prescription controller - get all prescriptions");
+        return ResponseEntity.ok(prescriptionService.getPrescriptions(pageRequest));
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_PATIENT"})
