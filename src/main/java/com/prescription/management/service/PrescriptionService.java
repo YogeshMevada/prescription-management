@@ -15,7 +15,7 @@ public interface PrescriptionService {
 
     List<PrescriptionResponse> getPrescriptionsByDoctor(String doctorReferenceNumber) throws Exception;
 
-    List<PrescriptionResponse> getPrescriptionsOfPatientForDoctor(String doctorReferenceNumber, String patientReferenceNumber) throws Exception;
-
     ApiResponse create(String doctorReferenceNumber, String patientReferenceNumber, AddPrescriptionRequest addPrescriptionRequest) throws Exception;
+
+    PrescriptionResponse map(Prescription prescriptionAccess);
 }

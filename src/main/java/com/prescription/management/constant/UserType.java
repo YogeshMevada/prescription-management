@@ -11,7 +11,7 @@ public enum UserType {
 
     private final String role;
 
-    private UserType(String role) {
+    private UserType(final String role) {
         this.role = role;
     }
 

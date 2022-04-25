@@ -2,6 +2,7 @@ package com.prescription.management.service;
 
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.PrescriptionAccessResponse;
+import com.prescription.management.dto.response.PrescriptionResponse;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface PrescriptionAccessService {
     ApiResponse requestPrescriptionByPharmacist(String pharmacistReferenceNumber, String patientReferenceNumber, String prescriptionReferenceNumber) throws Exception;
 
     ApiResponse providePrescriptionAccess(String patientReferenceNumber, String prescriptionReferenceNumber) throws Exception;
+
+    PrescriptionResponse getApprovedPrescription(String prescriptionReferenceNumber, String accessReferenceNumber) throws Exception;
 }

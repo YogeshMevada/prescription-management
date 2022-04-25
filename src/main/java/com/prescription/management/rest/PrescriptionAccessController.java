@@ -2,6 +2,7 @@ package com.prescription.management.rest;
 
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.PrescriptionAccessResponse;
+import com.prescription.management.dto.response.PrescriptionResponse;
 import com.prescription.management.service.PrescriptionAccessService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +75,13 @@ public class PrescriptionAccessController {
                                                                  @PathVariable("accessReferenceNumber") @NotNull(message = "Prescription access reference number is mandatory") final String accessReferenceNumber) throws Exception {
         log.info("Prescription access controller - get prescription access requests by doctor");
         return ResponseEntity.ok(prescriptionAccessService.providePrescriptionAccess(patientReferenceNumber, accessReferenceNumber));
+    }
+
+    @Secured({"ROLE_DOCTOR", "ROLE_PHARMACIST"})
+    @GetMapping(value = "/prescription/{prescriptionReferenceNumber}/access/{accessReferenceNumber}")
+    public ResponseEntity<PrescriptionResponse> getApprovedPrescription(@PathVariable("prescriptionReferenceNumber") @NotNull(message = "Doctor reference number is mandatory") final String prescriptionReferenceNumber,
+                                                                        @PathVariable("accessReferenceNumber") @NotNull(message = "Doctor reference number is mandatory") final String accessReferenceNumber) throws Exception {
+        log.info("Prescription access controller - get approved prescription");
+        return ResponseEntity.ok(prescriptionAccessService.getApprovedPrescription(prescriptionReferenceNumber, accessReferenceNumber));
     }
 }

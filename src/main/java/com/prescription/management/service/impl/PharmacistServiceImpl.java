@@ -19,7 +19,7 @@ public class PharmacistServiceImpl implements PharmacistService {
     }
 
     @Override
-    public Pharmacist findByReferenceNumber(String pharmacyReferenceNumber) {
+    public Pharmacist findByReferenceNumber(final String pharmacyReferenceNumber) {
         log.info("Pharmacist service - find By ReferenceNumber");
         return pharmacistRepository.findBypharmacyReferenceNumber(pharmacyReferenceNumber);
     }

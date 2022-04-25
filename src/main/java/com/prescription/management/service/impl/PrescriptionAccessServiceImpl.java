@@ -4,6 +4,7 @@ import com.prescription.management.constant.ErrorCode;
 import com.prescription.management.constant.ResponseStatus;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.PrescriptionAccessResponse;
+import com.prescription.management.dto.response.PrescriptionResponse;
 import com.prescription.management.entities.*;
 import com.prescription.management.repository.PrescriptionAccessRepository;
 import com.prescription.management.service.*;
@@ -52,7 +53,7 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
             log.error("Invalid Patient reference number : {}", patientReferenceNumber);
             throw new Exception("Invalid Patient reference number");
         }
-        final List<PrescriptionAccess> prescriptionAccesses = prescriptionAccessRepository.findByPatientReferenceNumber(patientReferenceNumber);
+        final List<PrescriptionAccess> prescriptionAccesses = prescriptionAccessRepository.findByPatientReferenceNumber(patientReferenceNumber, false);
         return prescriptionAccesses.stream()
                 .map(this::map)
                 .collect(Collectors.toList());
@@ -66,7 +67,7 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
             log.error("Invalid Doctor reference number : {}", doctorReferenceNumber);
             throw new Exception("Invalid Doctor reference number");
         }
-        final List<PrescriptionAccess> prescriptionAccesses = prescriptionAccessRepository.findByDoctorReferenceNumber(doctorReferenceNumber);
+        final List<PrescriptionAccess> prescriptionAccesses = prescriptionAccessRepository.findByDoctorReferenceNumber(doctorReferenceNumber, false);
         return prescriptionAccesses.stream()
                 .map(this::map)
                 .collect(Collectors.toList());
@@ -80,7 +81,7 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
             log.error("Invalid Pharmacist reference number : {}", pharmacyReferenceNumber);
             throw new Exception("Invalid Pharmacist reference number");
         }
-        final List<PrescriptionAccess> prescriptionAccesses = prescriptionAccessRepository.findByPharmacyReferenceNumber(pharmacyReferenceNumber);
+        final List<PrescriptionAccess> prescriptionAccesses = prescriptionAccessRepository.findByPharmacyReferenceNumber(pharmacyReferenceNumber, false);
         return prescriptionAccesses.stream()
                 .map(this::map)
                 .collect(Collectors.toList());
@@ -182,6 +183,7 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
     @Override
     @Transactional
     public ApiResponse providePrescriptionAccess(final String patientReferenceNumber, final String accessReferenceNumber) throws Exception {
+        log.info("Prescription service - provide prescription access");
         final Patient patient = patientService.findByReferenceNumber(patientReferenceNumber);
         if (Objects.isNull(patient)) {
             log.error("Invalid Patient reference number : {}", patientReferenceNumber);
@@ -211,8 +213,26 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
                 .build();
     }
 
+    @Override
+    public PrescriptionResponse getApprovedPrescription(final String prescriptionReferenceNumber, final String accessReferenceNumber) throws Exception {
+        log.info("Prescription service - get approved prescription details");
+        final Prescription prescription = prescriptionService.findByReferenceNumber(prescriptionReferenceNumber);
+        if (Objects.isNull(prescription)) {
+            log.error("Invalid Prescription reference number : {}", prescriptionReferenceNumber);
+            throw new Exception("Invalid prescription reference number");
+        }
+        final PrescriptionAccess prescriptionAccess = prescriptionAccessRepository.findByAccessReferenceNumber(accessReferenceNumber);
+
+        return prescriptionService.map(prescriptionAccess.getPrescription());
+    }
+
     private PrescriptionAccessResponse map(final PrescriptionAccess prescriptionAccess) {
         return PrescriptionAccessResponse.builder()
+                .doctorReferenceNumber(Objects.isNull(prescriptionAccess.getDoctor()) ? null : prescriptionAccess.getDoctor().getDoctorReferenceNumber())
+                .patientReferenceNumber(prescriptionAccess.getPatient().getPatientReferenceNumber())
+                .pharmacyReferenceNumber(Objects.isNull(prescriptionAccess.getPharmacist()) ? null : prescriptionAccess.getPharmacist().getPharmacyReferenceNumber())
+                .prescriptionReferenceNumber(prescriptionAccess.getAccessReferenceNumber())
+                .approved(prescriptionAccess.isApproved())
                 .build();
     }
 }

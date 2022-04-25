@@ -90,29 +90,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public List<PrescriptionResponse> getPrescriptionsOfPatientForDoctor(final String doctorReferenceNumber, final String patientReferenceNumber) throws Exception {
-        log.info("Prescription service - get prescriptions of patient for doctor");
-        final Doctor doctor = doctorService.findByReferenceNumber(doctorReferenceNumber);
-        if (Objects.isNull(doctor)) {
-            log.error("Invalid Doctor reference number : {}", doctorReferenceNumber);
-            throw new Exception("Invalid Doctor reference number");
-        }
-        final Patient patient = patientService.findByReferenceNumber(patientReferenceNumber);
-        if (Objects.isNull(patient)) {
-            log.error("Invalid Patient reference number : {}", patientReferenceNumber);
-            throw new Exception("Invalid patient reference number");
-        }
-        final List<Prescription> prescriptions = prescriptionRepository.findByPatientReferenceNumber(patientReferenceNumber);
-        if (prescriptions.isEmpty()) {
-            log.error("No prescriptions found for patient: {}", patientReferenceNumber);
-            throw new Exception("No prescriptions found for patient");
-        }
-        return prescriptions.stream()
-                .map(prescription -> map(prescription, doctorReferenceNumber))
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public ApiResponse create(final String doctorReferenceNumber, final String patientReferenceNumber, final AddPrescriptionRequest addPrescriptionRequest) throws Exception {
         log.info("Prescription service - create");
 
@@ -157,14 +134,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 .build();
     }
 
-    private PrescriptionItem map(final MedicineRequest medicineRequest, final Medicine medicine) {
-        final PrescriptionItem prescriptionItem = new PrescriptionItem();
-        prescriptionItem.setMedicine(medicine);
-        prescriptionItem.setQuantity(medicineRequest.getQuantity());
-        return prescriptionItem;
-    }
-
-    private PrescriptionResponse map(final Prescription prescription) {
+    @Override
+    public PrescriptionResponse map(final Prescription prescription) {
         return PrescriptionResponse.builder()
                 .appointmentNumber(prescription.getAppointmentNumber())
                 .referenceNumber(prescription.getPrescriptionReferenceNumber())
@@ -180,6 +151,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                                 .build())
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    private PrescriptionItem map(final MedicineRequest medicineRequest, final Medicine medicine) {
+        final PrescriptionItem prescriptionItem = new PrescriptionItem();
+        prescriptionItem.setMedicine(medicine);
+        prescriptionItem.setQuantity(medicineRequest.getQuantity());
+        return prescriptionItem;
     }
 
     private PrescriptionResponse map(final Prescription prescription, final String doctorReferenceNumber) {

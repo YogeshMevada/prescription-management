@@ -20,9 +20,9 @@ public class LoginController {
         return "register";
     }
 
-    @GetMapping(value = "/index")
+    @GetMapping(value = "/dashboard")
     public String getLandingPage() {
-        return "index";
+        return "dashboard";
     }
 
     @GetMapping(value = "/error")

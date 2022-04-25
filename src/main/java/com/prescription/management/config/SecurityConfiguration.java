@@ -60,7 +60,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin()
-                .loginPage("/authenticate/login").permitAll();
+                .loginPage("/authenticate/login").permitAll()
+                .loginProcessingUrl("/authenticate/processLogin")
+                .defaultSuccessUrl("/authenticate/dashboard")
+                .failureUrl("/authenticate/login?error=true");
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
     }

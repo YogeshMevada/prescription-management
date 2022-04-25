@@ -10,14 +10,14 @@ import java.util.List;
 @Repository
 public interface PrescriptionAccessRepository extends JpaRepository<PrescriptionAccess, Long> {
 
-    @Query("FROM PrescriptionAccess pa WHERE pa.patient.patientReferenceNumber = ?1")
-    List<PrescriptionAccess> findByPatientReferenceNumber(String patientReferenceNumber);
+    @Query("FROM PrescriptionAccess pa WHERE pa.patient.patientReferenceNumber = ?1 AND pa.approved = ?2")
+    List<PrescriptionAccess> findByPatientReferenceNumber(String patientReferenceNumber, boolean approved);
 
-    @Query("FROM PrescriptionAccess pa WHERE pa.doctor.doctorReferenceNumber = ?1")
-    List<PrescriptionAccess> findByDoctorReferenceNumber(String doctorReferenceNumber);
+    @Query("FROM PrescriptionAccess pa WHERE pa.doctor.doctorReferenceNumber = ?1 AND pa.approved = ?2")
+    List<PrescriptionAccess> findByDoctorReferenceNumber(String doctorReferenceNumber, boolean approved);
 
-    @Query("FROM PrescriptionAccess pa WHERE pa.pharmacist.pharmacyReferenceNumber = ?1")
-    List<PrescriptionAccess> findByPharmacyReferenceNumber(String pharmacyReferenceNumber);
+    @Query("FROM PrescriptionAccess pa WHERE pa.pharmacist.pharmacyReferenceNumber = ?1 AND pa.approved = ?2")
+    List<PrescriptionAccess> findByPharmacyReferenceNumber(String pharmacyReferenceNumber, boolean approved);
 
     @Query("FROM PrescriptionAccess pa WHERE pa.pharmacist.pharmacyReferenceNumber = ?1 AND pa.prescription.prescriptionReferenceNumber = ?2 AND pa.approved = ?3")
     PrescriptionAccess findByPharmacyReferenceNumberAndPrescriptionReferenceNumber(String pharmacyReferenceNumber, String prescriptionReferenceNumber, boolean approved);

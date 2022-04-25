@@ -43,14 +43,6 @@ public class PrescriptionController {
         return ResponseEntity.ok(prescriptionService.getPrescriptionsByDoctor(doctorReferenceNumber));
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_DOCTOR"})
-    @GetMapping("/doctor/{doctorReferenceNumber}/patient/{patientReferenceNumber}/prescription")
-    public ResponseEntity<List<PrescriptionResponse>> getPrescriptionsOfPatientForDoctor(@PathVariable @NotBlank(message = "Doctor reference number is mandatory") final String doctorReferenceNumber,
-                                                                                         @PathVariable @NotBlank(message = "Patient reference number is mandatory") final String patientReferenceNumber) throws Exception {
-        log.info("Prescription controller - get prescriptions of patient for doctor");
-        return ResponseEntity.ok(prescriptionService.getPrescriptionsOfPatientForDoctor(doctorReferenceNumber, patientReferenceNumber));
-    }
-
     @Secured({"ROLE_DOCTOR"})
     @PostMapping("/doctor/{doctorReferenceNumber}/patient/{patientReferenceNumber}/prescription")
     public ResponseEntity<ApiResponse> create(@PathVariable("doctorReferenceNumber") @NotNull final String doctorReferenceNumber,
