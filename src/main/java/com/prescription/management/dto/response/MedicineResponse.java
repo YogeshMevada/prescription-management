@@ -11,5 +11,11 @@ public class MedicineResponse {
 
     private String medicineReferenceNumber;
 
+    private String brandName;
+
+    private String activeIngredientName;
+
     private int quantity;
+
+    private String unit;
 }

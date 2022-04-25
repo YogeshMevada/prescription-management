@@ -11,14 +11,14 @@ import javax.persistence.Table;
 @Table(name = "medicine")
 public class Medicine extends AuditModel {
 
+    @Column(name = "medicine_reference_number", nullable = false)
+    private String medicineReferenceNumber;
+
     @Column(name = "brand_name", nullable = false)
     private String brandName;
 
     @Column(name = "active_ingredient_name", nullable = false)
     private String activeIngredientName;
-
-    @Column(name = "medicine_reference_number", nullable = false)
-    private String medicineReferenceNumber;
 
     @Column(name = "unit")
     private String unit;

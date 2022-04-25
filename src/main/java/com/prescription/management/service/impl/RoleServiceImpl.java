@@ -40,6 +40,7 @@ public class RoleServiceImpl implements RoleService {
         log.info("Get role by id : {}", roleId);
         final Role role = roleRepository.findById(roleId).orElse(null);
         if (Objects.isNull(role)) {
+            log.error("Role not found");
             throw new Exception("Role not found");
         }
         return mapRoleResponse(role);

@@ -1,6 +1,7 @@
 package com.prescription.management.service.impl;
 
 import com.prescription.management.constant.ResponseStatus;
+import com.prescription.management.constant.Status;
 import com.prescription.management.dto.request.RegistrationRequest;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.entities.Users;
@@ -69,6 +70,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         users.setContact(registrationRequest.getContact());
         users.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         users.setUserType(registrationRequest.getUserType());
+        users.setStatus(Status.ACTIVE);
         return users;
     }
 }
