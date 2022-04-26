@@ -1,6 +1,8 @@
 package com.prescription.management.rest;
 
+import com.prescription.management.dto.PageRequest;
 import com.prescription.management.dto.response.ApiResponse;
+import com.prescription.management.dto.response.PageResponse;
 import com.prescription.management.dto.response.PrescriptionAccessResponse;
 import com.prescription.management.dto.response.PrescriptionResponse;
 import com.prescription.management.service.PrescriptionAccessService;
@@ -13,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Slf4j
 @Validated
@@ -29,24 +30,27 @@ public class PrescriptionAccessController {
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_PATIENT"})
-    @GetMapping(value = "/patient/{patientReferenceNumber}/access", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PrescriptionAccessResponse>> getPrescriptionAccessRequestsForPatient(@PathVariable("patientReferenceNumber") @NotNull(message = "Doctor reference number is mandatory") final String patientReferenceNumber) throws Exception {
+    @GetMapping(value = "/patient/{patientReferenceNumber}/access", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PageResponse<PrescriptionAccessResponse>> getPrescriptionAccessRequestsForPatient(@PathVariable("patientReferenceNumber") @NotNull(message = "Doctor reference number is mandatory") final String patientReferenceNumber,
+                                                                                                            @RequestBody @NotNull(message = "Page request is mandatory") final PageRequest pageRequest) throws Exception {
         log.info("Prescription access controller - get prescription access requests by doctor");
-        return ResponseEntity.ok(prescriptionAccessService.getPrescriptionAccessRequestsForPatient(patientReferenceNumber));
+        return ResponseEntity.ok(prescriptionAccessService.getPrescriptionAccessRequestsForPatient(patientReferenceNumber, pageRequest));
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_DOCTOR"})
     @GetMapping(value = "/doctor/{doctorReferenceNumber}/access", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PrescriptionAccessResponse>> getPrescriptionAccessRequestsByDoctor(@PathVariable("doctorReferenceNumber") @NotNull(message = "Doctor reference number is mandatory") final String doctorReferenceNumber) throws Exception {
+    public ResponseEntity<PageResponse<PrescriptionAccessResponse>> getPrescriptionAccessRequestsByDoctor(@PathVariable("doctorReferenceNumber") @NotNull(message = "Doctor reference number is mandatory") final String doctorReferenceNumber,
+                                                                                                          @RequestBody @NotNull(message = "Page request is mandatory") final PageRequest pageRequest) throws Exception {
         log.info("Prescription access controller - get prescription access requests by doctor");
-        return ResponseEntity.ok(prescriptionAccessService.getPrescriptionAccessRequestsByDoctor(doctorReferenceNumber));
+        return ResponseEntity.ok(prescriptionAccessService.getPrescriptionAccessRequestsByDoctor(doctorReferenceNumber, pageRequest));
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_PHARMACIST"})
     @GetMapping(value = "/pharmacist/{pharmacyReferenceNumber}/access", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PrescriptionAccessResponse>> getPrescriptionAccessRequestsByPharmacist(@PathVariable("pharmacyReferenceNumber") @NotNull(message = "Pharmacy reference number is mandatory") final String pharmacyReferenceNumber) throws Exception {
+    public ResponseEntity<PageResponse<PrescriptionAccessResponse>> getPrescriptionAccessRequestsByPharmacist(@PathVariable("pharmacyReferenceNumber") @NotNull(message = "Pharmacy reference number is mandatory") final String pharmacyReferenceNumber,
+                                                                                                              @RequestBody @NotNull(message = "Page request is mandatory") final PageRequest pageRequest) throws Exception {
         log.info("Prescription access controller - get prescription access requests by doctor");
-        return ResponseEntity.ok(prescriptionAccessService.getPrescriptionAccessRequestsByPharmacist(pharmacyReferenceNumber));
+        return ResponseEntity.ok(prescriptionAccessService.getPrescriptionAccessRequestsByPharmacist(pharmacyReferenceNumber, pageRequest));
     }
 
     @Secured({"ROLE_DOCTOR"})

@@ -1,7 +1,7 @@
 package com.prescription.management.service;
 
+import com.prescription.management.dto.PageRequest;
 import com.prescription.management.dto.request.AddPrescriptionRequest;
-import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.PageResponse;
 import com.prescription.management.dto.response.PrescriptionResponse;
@@ -15,11 +15,13 @@ public interface PrescriptionService {
 
     Prescription findByReferenceNumber(String prescriptionReferenceNumber);
 
+    Prescription validateByReferenceNumber(String prescriptionReferenceNumber) throws Exception;
+
     PageResponse<PrescriptionResponse> getPrescriptionsOfPatient(String patientReferenceNumber, PageRequest pageRequest) throws Exception;
 
     PageResponse<PrescriptionResponse> getPrescriptionsByDoctor(String doctorReferenceNumber, PageRequest pageRequest) throws Exception;
 
-    ApiResponse create(String doctorReferenceNumber, String patientReferenceNumber, AddPrescriptionRequest addPrescriptionRequest) throws Exception;
+    ApiResponse<PrescriptionResponse> create(String doctorReferenceNumber, String patientReferenceNumber, AddPrescriptionRequest addPrescriptionRequest) throws Exception;
 
     PrescriptionResponse map(Prescription prescriptionAccess);
 }

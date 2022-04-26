@@ -29,7 +29,7 @@ public class RegistrationController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> register(@RequestBody @Valid RegistrationRequest registrationRequest) {
+    public ResponseEntity<ApiResponse> register(@RequestBody @Valid final RegistrationRequest registrationRequest) throws Exception {
         log.info("Registration controller - register");
         return ResponseEntity.ok(registrationService.register(registrationRequest));
     }

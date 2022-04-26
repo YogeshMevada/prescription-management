@@ -1,4 +1,4 @@
-package com.prescription.management.dto.request;
+package com.prescription.management.dto;
 
 import lombok.Data;
 import org.springframework.data.domain.Sort;

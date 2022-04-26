@@ -3,8 +3,8 @@ package com.prescription.management.service.impl;
 import com.prescription.management.constant.ResponseStatus;
 import com.prescription.management.constant.Status;
 import com.prescription.management.constant.UserType;
+import com.prescription.management.dto.PageRequest;
 import com.prescription.management.dto.request.AddRoleRequest;
-import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.request.UpdateRoleRequest;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.PageResponse;
@@ -44,13 +44,13 @@ public class RoleServiceImpl implements RoleService {
         final Role role = roleRepository.findById(roleId).orElse(null);
         if (Objects.isNull(role)) {
             log.error("Role not found");
-            ApiResponse.builder()
+            return ApiResponse.<RoleResponse>builder()
                     .message("Role not found")
                     .status(ResponseStatus.ERROR)
                     .build();
         }
         return ApiResponse.<RoleResponse>builder()
-                .record(map(role))
+                .data(map(role))
                 .status(ResponseStatus.SUCCESS)
                 .build();
     }
@@ -66,7 +66,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public ApiResponse create(final AddRoleRequest addRoleRequest) throws Exception {
+    public ApiResponse<RoleResponse> create(final AddRoleRequest addRoleRequest) throws Exception {
         log.info("Add role");
         final Role roleByName = roleRepository.findByName(addRoleRequest.getName());
         if (Objects.nonNull(roleByName)) {
@@ -79,8 +79,8 @@ public class RoleServiceImpl implements RoleService {
         final Role savedRole = roleRepository.save(role);
 
         log.info("Role created successfully");
-        return ApiResponse.builder()
-                .record(map(savedRole))
+        return ApiResponse.<RoleResponse>builder()
+                .data(map(savedRole))
                 .message("Role created successfully")
                 .status(ResponseStatus.SUCCESS)
                 .build();
@@ -88,18 +88,25 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public ApiResponse update(final long roleId, final UpdateRoleRequest updateRoleRequest) throws Exception {
+    public ApiResponse<RoleResponse> update(final long roleId, final UpdateRoleRequest updateRoleRequest) throws Exception {
         final Role role = roleRepository.findById(roleId).orElse(null);
         if (Objects.isNull(role)) {
             log.error("Role not present");
             throw new Exception("Role not present");
         }
+        if (role.getStatus().equals(updateRoleRequest.getStatus())) {
+            return ApiResponse.<RoleResponse>builder()
+                    .message("Role status is already same")
+                    .status(ResponseStatus.ERROR)
+                    .build();
+        }
         if (Objects.nonNull(updateRoleRequest.getStatus()))
             role.setStatus(updateRoleRequest.getStatus());
-        roleRepository.save(role);
+        final Role savedRole = roleRepository.save(role);
 
         log.info("Role updated successfully");
-        return ApiResponse.builder()
+        return ApiResponse.<RoleResponse>builder()
+                .data(map(savedRole))
                 .message("Role updated successfully")
                 .status(ResponseStatus.SUCCESS)
                 .build();

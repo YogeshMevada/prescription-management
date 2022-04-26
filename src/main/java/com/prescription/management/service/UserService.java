@@ -10,5 +10,5 @@ public interface UserService {
 
     Users findUserByContact(String contact);
 
-    void registerNewUser(Users users, UserType userType);
+    void registerNewUser(Users users, UserType userType) throws Exception;
 }

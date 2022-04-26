@@ -1,9 +1,9 @@
 package com.prescription.management.service.impl;
 
 import com.prescription.management.constant.ResponseStatus;
+import com.prescription.management.dto.PageRequest;
 import com.prescription.management.dto.request.AddPrescriptionRequest;
 import com.prescription.management.dto.request.MedicineRequest;
-import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.MedicineResponse;
 import com.prescription.management.dto.response.PageResponse;
@@ -63,7 +63,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                     .build();
         }
         return ApiResponse.<PrescriptionResponse>builder()
-                .record(map(prescription))
+                .data(map(prescription))
                 .status(ResponseStatus.SUCCESS)
                 .build();
     }
@@ -86,13 +86,19 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
+    public Prescription validateByReferenceNumber(String prescriptionReferenceNumber) throws Exception {
+        final Prescription prescription = validateByReferenceNumber(prescriptionReferenceNumber);
+        if (Objects.isNull(prescription)) {
+            log.error("Invalid Prescription reference number : {}", prescriptionReferenceNumber);
+            throw new Exception("Invalid prescription reference number");
+        }
+        return prescription;
+    }
+
+    @Override
     public PageResponse<PrescriptionResponse> getPrescriptionsOfPatient(final String patientReferenceNumber, final PageRequest pageRequest) throws Exception {
         log.info("Prescription service - get prescriptions of patient");
-        final Patient patient = patientService.findByReferenceNumber(patientReferenceNumber);
-        if (Objects.isNull(patient)) {
-            log.error("Invalid Patient reference number : {}", patientReferenceNumber);
-            throw new Exception("Invalid patient reference number");
-        }
+        patientService.validateByReferenceNumber(patientReferenceNumber);
         final Pageable pageable = CommonUtil.getPageableInfo(pageRequest);
         final Page<Prescription> prescriptions = prescriptionRepository.findByPatientReferenceNumber(patientReferenceNumber, pageable);
 
@@ -125,11 +131,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             log.error("Invalid Doctor reference number : {}", doctorReferenceNumber);
             throw new Exception("Invalid Doctor reference number");
         }
-        final Patient patient = patientService.findByReferenceNumber(patientReferenceNumber);
-        if (Objects.isNull(patient)) {
-            log.error("Invalid Patient reference number : {}", patientReferenceNumber);
-            throw new Exception("Invalid Patient reference number");
-        }
+        final Patient patient = patientService.validateByReferenceNumber(patientReferenceNumber);
         final List<PrescriptionItem> prescriptionItems = new ArrayList<>();
         final List<MedicineRequest> invalidMedicines = addPrescriptionRequest.getMedicines().stream()
                 .filter(medicineRequest -> {
@@ -156,7 +158,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
         log.info("Prescription created successfully");
         return ApiResponse.<PrescriptionResponse>builder()
-                .record(map(savedPrescription))
+                .data(map(savedPrescription))
                 .message("Prescription created successfully")
                 .status(ResponseStatus.SUCCESS)
                 .build();

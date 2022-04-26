@@ -3,16 +3,16 @@ package com.prescription.management.service;
 import com.prescription.management.dto.request.AddMedicineRequest;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.MedicineResponse;
+import com.prescription.management.dto.response.PageResponse;
+import com.prescription.management.dto.search.MedicineSearchRequest;
 import com.prescription.management.entities.Medicine;
 
-import java.util.List;
-
 public interface MedicineService {
-    MedicineResponse getMedicine(String medicineReferenceNumber) throws Exception;
+    ApiResponse<MedicineResponse> getMedicine(String medicineReferenceNumber) throws Exception;
 
-    List<MedicineResponse> getMedicines() throws Exception;
+    PageResponse<MedicineResponse> getMedicines(MedicineSearchRequest medicineSearchRequest) throws Exception;
 
     Medicine findMedicine(long medicineId, String medicineReferenceNumber);
 
-    ApiResponse create(AddMedicineRequest addMedicineRequest) throws Exception;
+    ApiResponse<MedicineResponse> create(AddMedicineRequest addMedicineRequest) throws Exception;
 }

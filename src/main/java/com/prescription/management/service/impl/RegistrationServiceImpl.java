@@ -35,7 +35,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public ApiResponse register(final RegistrationRequest registrationRequest) {
+    public ApiResponse register(final RegistrationRequest registrationRequest) throws Exception {
         log.info("User registration");
 
         userValidation.validateUserInput(registrationRequest);
@@ -54,6 +54,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         final Users users = map(registrationRequest);
         userService.registerNewUser(users, registrationRequest.getUserType());
+
         log.info("User registration successful");
         return ApiResponse.builder()
                 .message("User registration successful")

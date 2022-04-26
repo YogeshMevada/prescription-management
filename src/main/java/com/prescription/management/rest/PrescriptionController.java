@@ -1,7 +1,7 @@
 package com.prescription.management.rest;
 
+import com.prescription.management.dto.PageRequest;
 import com.prescription.management.dto.request.AddPrescriptionRequest;
-import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.response.ApiResponse;
 import com.prescription.management.dto.response.PageResponse;
 import com.prescription.management.dto.response.PrescriptionResponse;

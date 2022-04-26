@@ -11,7 +11,7 @@ public class Pharmacist extends AuditModel {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private Users users;
+    private Users user;
 
     @Column(name = "pharmacy_reference_number", nullable = false)
     private String pharmacyReferenceNumber;

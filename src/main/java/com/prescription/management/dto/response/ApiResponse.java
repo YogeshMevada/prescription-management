@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class ApiResponse<T> {
 
-    private T record;
+    private T data;
 
     private String message;
 

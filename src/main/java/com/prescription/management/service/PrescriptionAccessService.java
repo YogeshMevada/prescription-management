@@ -1,24 +1,24 @@
 package com.prescription.management.service;
 
+import com.prescription.management.dto.PageRequest;
 import com.prescription.management.dto.response.ApiResponse;
+import com.prescription.management.dto.response.PageResponse;
 import com.prescription.management.dto.response.PrescriptionAccessResponse;
 import com.prescription.management.dto.response.PrescriptionResponse;
 
-import java.util.List;
-
 public interface PrescriptionAccessService {
 
-    List<PrescriptionAccessResponse> getPrescriptionAccessRequestsForPatient(String patientReferenceNumber) throws Exception;
+    PageResponse<PrescriptionAccessResponse> getPrescriptionAccessRequestsForPatient(String patientReferenceNumber, PageRequest pageRequest) throws Exception;
 
-    List<PrescriptionAccessResponse> getPrescriptionAccessRequestsByDoctor(String doctorReferenceNumber) throws Exception;
+    PageResponse<PrescriptionAccessResponse> getPrescriptionAccessRequestsByDoctor(String doctorReferenceNumber, PageRequest pageRequest) throws Exception;
 
-    List<PrescriptionAccessResponse> getPrescriptionAccessRequestsByPharmacist(String pharmacyReferenceNumber) throws Exception;
+    PageResponse<PrescriptionAccessResponse> getPrescriptionAccessRequestsByPharmacist(String pharmacyReferenceNumber, PageRequest pageRequest) throws Exception;
 
-    ApiResponse requestPrescriptionByDoctor(String doctorReferenceNumber, String patientReferenceNumber, String prescriptionReferenceNumber) throws Exception;
+    ApiResponse<PrescriptionAccessResponse> requestPrescriptionByDoctor(String doctorReferenceNumber, String patientReferenceNumber, String prescriptionReferenceNumber) throws Exception;
 
-    ApiResponse requestPrescriptionByPharmacist(String pharmacistReferenceNumber, String patientReferenceNumber, String prescriptionReferenceNumber) throws Exception;
+    ApiResponse<PrescriptionAccessResponse> requestPrescriptionByPharmacist(String pharmacistReferenceNumber, String patientReferenceNumber, String prescriptionReferenceNumber) throws Exception;
 
-    ApiResponse providePrescriptionAccess(String patientReferenceNumber, String prescriptionReferenceNumber) throws Exception;
+    ApiResponse<PrescriptionAccessResponse> providePrescriptionAccess(String patientReferenceNumber, String prescriptionReferenceNumber) throws Exception;
 
     PrescriptionResponse getApprovedPrescription(String prescriptionReferenceNumber, String accessReferenceNumber) throws Exception;
 }

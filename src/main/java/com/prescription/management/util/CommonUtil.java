@@ -1,7 +1,7 @@
 package com.prescription.management.util;
 
+import com.prescription.management.dto.PageRequest;
 import com.prescription.management.dto.Pagination;
-import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.response.PageResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

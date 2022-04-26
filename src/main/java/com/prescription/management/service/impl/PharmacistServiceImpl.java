@@ -23,4 +23,9 @@ public class PharmacistServiceImpl implements PharmacistService {
         log.info("Pharmacist service - find By ReferenceNumber");
         return pharmacistRepository.findBypharmacyReferenceNumber(pharmacyReferenceNumber);
     }
+
+    @Override
+    public Pharmacist save(final Pharmacist pharmacist) {
+        return pharmacistRepository.save(pharmacist);
+    }
 }
