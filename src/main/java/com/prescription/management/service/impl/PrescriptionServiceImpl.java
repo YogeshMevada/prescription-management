@@ -53,6 +53,22 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
+    public ApiResponse<PrescriptionResponse> getPrescription(final String prescriptionReferenceNumber) {
+        log.info("Prescription service - get prescription by prescription reference number");
+        final Prescription prescription = prescriptionRepository.findByPrescriptionReferenceNumber(prescriptionReferenceNumber);
+        if (Objects.isNull(prescription)) {
+            return ApiResponse.<PrescriptionResponse>builder()
+                    .message(String.format("Prescription for reference-%s number not found", prescriptionReferenceNumber))
+                    .status(ResponseStatus.ERROR)
+                    .build();
+        }
+        return ApiResponse.<PrescriptionResponse>builder()
+                .record(map(prescription))
+                .status(ResponseStatus.SUCCESS)
+                .build();
+    }
+
+    @Override
     public PageResponse<PrescriptionResponse> getPrescriptions(final PageRequest pageRequest) throws Exception {
         log.info("Prescription service - get all prescriptions");
 
@@ -70,46 +86,39 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public List<PrescriptionResponse> getPrescriptionsOfPatient(final String patientReferenceNumber) throws Exception {
+    public PageResponse<PrescriptionResponse> getPrescriptionsOfPatient(final String patientReferenceNumber, final PageRequest pageRequest) throws Exception {
         log.info("Prescription service - get prescriptions of patient");
         final Patient patient = patientService.findByReferenceNumber(patientReferenceNumber);
         if (Objects.isNull(patient)) {
             log.error("Invalid Patient reference number : {}", patientReferenceNumber);
             throw new Exception("Invalid patient reference number");
         }
-        final List<Prescription> prescriptions = prescriptionRepository.findByPatientReferenceNumber(patientReferenceNumber);
-        if (prescriptions.isEmpty()) {
-            log.error("No prescriptions found for patient: {}", patientReferenceNumber);
-            throw new Exception("No prescriptions found for patient");
-        }
-        return prescriptions.stream()
-                .map(this::map)
-                .collect(Collectors.toList());
+        final Pageable pageable = CommonUtil.getPageableInfo(pageRequest);
+        final Page<Prescription> prescriptions = prescriptionRepository.findByPatientReferenceNumber(patientReferenceNumber, pageable);
+
+        log.info("Prescriptions found:{}", prescriptions.getSize());
+        return CommonUtil.createPageResponse(prescriptions, this::map);
     }
 
     @Override
-    public List<PrescriptionResponse> getPrescriptionsByDoctor(final String doctorReferenceNumber) throws Exception {
+    public PageResponse<PrescriptionResponse> getPrescriptionsByDoctor(final String doctorReferenceNumber, final PageRequest pageRequest) throws Exception {
         log.info("Prescription service - get prescriptions by doctor");
         final Doctor doctor = doctorService.findByReferenceNumber(doctorReferenceNumber);
         if (Objects.isNull(doctor)) {
             log.error("Invalid Doctor reference number : {}", doctorReferenceNumber);
             throw new Exception("Invalid Doctor reference number");
         }
-        final List<Prescription> prescriptions = prescriptionRepository.findByDoctorReferenceNumber(doctorReferenceNumber);
-        if (prescriptions.isEmpty()) {
-            log.error("No prescriptions found for doctor: {}", doctorReferenceNumber);
-            throw new Exception("No prescriptions found for doctor");
-        }
-        return prescriptions.stream()
-                .map(prescription -> map(prescription))
-                .collect(Collectors.toList());
+
+        final Pageable pageable = CommonUtil.getPageableInfo(pageRequest);
+        final Page<Prescription> prescriptions = prescriptionRepository.findByDoctorReferenceNumber(doctorReferenceNumber, pageable);
+
+        log.info("Prescriptions found:{}", prescriptions.getSize());
+        return CommonUtil.createPageResponse(prescriptions, this::map);
     }
 
     @Override
-    public ApiResponse create(final String doctorReferenceNumber, final String patientReferenceNumber, final AddPrescriptionRequest addPrescriptionRequest) throws Exception {
+    public ApiResponse<PrescriptionResponse> create(final String doctorReferenceNumber, final String patientReferenceNumber, final AddPrescriptionRequest addPrescriptionRequest) throws Exception {
         log.info("Prescription service - create");
-
-        prescriptionValidation.validate(addPrescriptionRequest);
 
         final Doctor doctor = doctorService.findByReferenceNumber(doctorReferenceNumber);
         if (Objects.isNull(doctor)) {
@@ -143,8 +152,11 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         prescription.setDoctor(doctor);
         prescription.setPatient(patient);
         prescription.getPrescriptionItems().addAll(prescriptionItems);
+        final Prescription savedPrescription = prescriptionRepository.save(prescription);
 
-        return ApiResponse.builder()
+        log.info("Prescription created successfully");
+        return ApiResponse.<PrescriptionResponse>builder()
+                .record(map(savedPrescription))
                 .message("Prescription created successfully")
                 .status(ResponseStatus.SUCCESS)
                 .build();

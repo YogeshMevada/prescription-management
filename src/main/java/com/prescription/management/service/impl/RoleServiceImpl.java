@@ -4,20 +4,23 @@ import com.prescription.management.constant.ResponseStatus;
 import com.prescription.management.constant.Status;
 import com.prescription.management.constant.UserType;
 import com.prescription.management.dto.request.AddRoleRequest;
+import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.request.UpdateRoleRequest;
 import com.prescription.management.dto.response.ApiResponse;
+import com.prescription.management.dto.response.PageResponse;
 import com.prescription.management.dto.response.RoleResponse;
 import com.prescription.management.entities.Role;
 import com.prescription.management.repository.RoleRepository;
 import com.prescription.management.service.RoleService;
+import com.prescription.management.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,26 +39,29 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleResponse getRole(final long roleId) throws Exception {
+    public ApiResponse<RoleResponse> getRole(final long roleId) throws Exception {
         log.info("Get role by id : {}", roleId);
         final Role role = roleRepository.findById(roleId).orElse(null);
         if (Objects.isNull(role)) {
             log.error("Role not found");
-            throw new Exception("Role not found");
+            ApiResponse.builder()
+                    .message("Role not found")
+                    .status(ResponseStatus.ERROR)
+                    .build();
         }
-        return mapRoleResponse(role);
+        return ApiResponse.<RoleResponse>builder()
+                .record(map(role))
+                .status(ResponseStatus.SUCCESS)
+                .build();
     }
 
     @Override
-    public List<RoleResponse> getRoles() throws Exception {
+    public PageResponse<RoleResponse> getRoles(final PageRequest pageRequest) throws Exception {
         log.info("Get all roles");
-        final List<Role> roles = roleRepository.findAll();
-        if (roles.isEmpty()) {
-            throw new Exception("Roles not found");
-        }
-        return roles.stream()
-                .map(this::mapRoleResponse)
-                .collect(Collectors.toList());
+        final Pageable pageable = CommonUtil.getPageableInfo(pageRequest);
+        final Page<Role> roles = roleRepository.findAll(pageable);
+
+        return CommonUtil.createPageResponse(roles, this::map);
     }
 
     @Override
@@ -70,10 +76,11 @@ public class RoleServiceImpl implements RoleService {
         final Role role = new Role();
         role.setName(addRoleRequest.getName());
         role.setStatus(Status.ACTIVE);
-        roleRepository.save(role);
+        final Role savedRole = roleRepository.save(role);
 
         log.info("Role created successfully");
         return ApiResponse.builder()
+                .record(map(savedRole))
                 .message("Role created successfully")
                 .status(ResponseStatus.SUCCESS)
                 .build();
@@ -98,7 +105,7 @@ public class RoleServiceImpl implements RoleService {
                 .build();
     }
 
-    private RoleResponse mapRoleResponse(final Role role) {
+    private RoleResponse map(final Role role) {
         return RoleResponse.builder()
                 .id(role.getId())
                 .name(role.getName())

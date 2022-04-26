@@ -1,8 +1,10 @@
 package com.prescription.management.rest;
 
 import com.prescription.management.dto.request.AddRoleRequest;
+import com.prescription.management.dto.request.PageRequest;
 import com.prescription.management.dto.request.UpdateRoleRequest;
 import com.prescription.management.dto.response.ApiResponse;
+import com.prescription.management.dto.response.PageResponse;
 import com.prescription.management.dto.response.RoleResponse;
 import com.prescription.management.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.List;
 
 @Slf4j
 @Validated
@@ -32,19 +34,19 @@ public class RoleController {
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping(value = "/role/{roleId}")
-    public ResponseEntity<RoleResponse> getRole(@PathVariable("roleId") @Positive(message = "RoleId must be greater than zero") final long roleId) throws Exception {
+    public ResponseEntity<ApiResponse<RoleResponse>> getRole(@PathVariable("roleId") final @Positive(message = "RoleId must be greater than zero") long roleId) throws Exception {
         return ResponseEntity.ok(roleService.getRole(roleId));
     }
 
     @Secured({"ROLE_ADMIN"})
-    @GetMapping(value = "/role")
-    public ResponseEntity<List<RoleResponse>> getRoles() throws Exception {
-        return ResponseEntity.ok(roleService.getRoles());
+    @GetMapping(value = "/role", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PageResponse<RoleResponse>> getRoles(@RequestBody @NotNull(message = "Page request is mandatory") final PageRequest pageRequest) throws Exception {
+        return ResponseEntity.ok(roleService.getRoles(pageRequest));
     }
 
     @Secured({"ROLE_ADMIN"})
     @PostMapping(value = "/role", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> create(@RequestBody @Valid final AddRoleRequest addRoleRequest) throws Exception {
+    public ResponseEntity<ApiResponse<RoleResponse>> create(@RequestBody @Valid final AddRoleRequest addRoleRequest) throws Exception {
         return ResponseEntity.ok(roleService.create(addRoleRequest));
     }
 

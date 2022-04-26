@@ -7,7 +7,9 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class ApiResponse {
+public class ApiResponse<T> {
+
+    private T record;
 
     private String message;
 
