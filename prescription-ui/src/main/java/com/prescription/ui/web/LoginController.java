@@ -12,6 +12,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login() {
+        log.info("Login page reached");
         return "login";
     }
 

@@ -1,2 +1,0 @@
-# prescription-management
-Prescription Management
