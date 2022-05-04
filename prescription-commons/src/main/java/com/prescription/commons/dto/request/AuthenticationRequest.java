@@ -12,4 +12,7 @@ public class AuthenticationRequest {
 
     @NotBlank(message = "Password is mandatory!")
     private String password;
+
+    @NotBlank(message = "Encrypted key is mandatory!")
+    private String aesEncryptedKey;
 }

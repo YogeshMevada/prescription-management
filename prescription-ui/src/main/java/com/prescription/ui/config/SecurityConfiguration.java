@@ -1,13 +1,14 @@
 package com.prescription.ui.config;
 
 import com.prescription.ui.filter.CustomerFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.prescription.ui.util.UrlHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
@@ -21,11 +22,13 @@ import java.util.concurrent.TimeUnit;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
+    private final UrlHelper urlHelper;
+
     private final CustomerFilter customerFilter;
 
-    @Autowired
-    public SecurityConfiguration(final CustomerFilter customerFilter) {
-        this.customerFilter = customerFilter;
+    public SecurityConfiguration(UrlHelper urlHelper) {
+        this.urlHelper = urlHelper;
+        this.customerFilter = new CustomerFilter(this.urlHelper);
     }
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
@@ -35,7 +38,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    public void configure(final WebSecurity web) throws Exception {
+        web.ignoring()
+                .antMatchers("/static/**");
+    }
+
+    @Override
+    protected void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests().antMatchers("/**", "/static/**").permitAll()
                 .and()
