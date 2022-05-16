@@ -11,3 +11,8 @@ function generateRsaEncryptedKey(input, publicEncKey) {
     jSEncrypt.setPublicKey(publicEncKey);
     return jSEncrypt.encrypt(input);
 }
+
+function setCsrfTokenInRequestHeader(xhr) {
+	const authorizationToken = window.localStorage.getItem('authorization');
+	xhr.setRequestHeader("csrf_token", authorizationToken);
+}

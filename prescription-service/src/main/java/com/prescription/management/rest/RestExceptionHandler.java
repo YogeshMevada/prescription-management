@@ -3,6 +3,8 @@ package com.prescription.management.rest;
 import com.prescription.commons.dto.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,22 @@ public class RestExceptionHandler {
         final List<String> errors = e.getBindingResult().getAllErrors().stream()
                 .map(objectError -> ((FieldError) objectError).getField().concat("-").concat(objectError.getDefaultMessage()))
                 .collect(Collectors.toList());
-        return new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), errors);
+        return new ApiError(HttpStatus.BAD_REQUEST, e.getMessage(), errors);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleException(final AuthenticationException e) {
+        log.error(e.getMessage(), e);
+        return new ApiError(HttpStatus.UNAUTHORIZED, e.getMessage(), e.getLocalizedMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleException(final BadCredentialsException e) {
+        log.error(e.getMessage(), e);
+        return new ApiError(HttpStatus.UNAUTHORIZED, e.getMessage(), e.getLocalizedMessage());
     }
 }

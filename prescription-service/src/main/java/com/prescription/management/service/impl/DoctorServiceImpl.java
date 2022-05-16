@@ -43,15 +43,15 @@ public class DoctorServiceImpl implements DoctorService {
         final Doctor doctor = findByReferenceNumber(doctorReferenceNumber);
         if (Objects.isNull(doctor)) {
             log.error("Doctor not found for reference number-{}", doctorReferenceNumber);
-            return ApiResponse.<DoctorResponse>builder()
-                    .message(String.format("Doctor not found for reference number-%s", doctorReferenceNumber))
-                    .status(ResponseStatus.ERROR)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage(String.format("Doctor not found for reference number-%s", doctorReferenceNumber));
+            apiResponse.setStatus(ResponseStatus.ERROR);
+            return apiResponse;
         }
-        return ApiResponse.<DoctorResponse>builder()
-                .data(map(doctor))
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(doctor));
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
@@ -75,29 +75,29 @@ public class DoctorServiceImpl implements DoctorService {
         final Doctor doctor = findByReferenceNumber(doctorReferenceNumber);
         if (Objects.isNull(doctor)) {
             log.error("Doctor not found by reference number-{}", doctorReferenceNumber);
-            return ApiResponse.<DoctorResponse>builder()
-                    .message(String.format("Doctor not found by reference number-%s", doctorReferenceNumber))
-                    .status(ResponseStatus.ERROR)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage(String.format("Doctor not found by reference number-%s", doctorReferenceNumber));
+            apiResponse.setStatus(ResponseStatus.ERROR);
+            return apiResponse;
         }
         doctor.setDegree(doctor.getDegree());
         final Doctor savedDoctor = doctorRepository.save(doctor);
 
         log.info("Doctor updated successfully");
-        return ApiResponse.<DoctorResponse>builder()
-                .data(map(savedDoctor))
-                .message("Doctor updated successfully")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(savedDoctor));
+        apiResponse.setMessage("Doctor updated successfully");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     private DoctorResponse map(final Doctor doctor) {
-        return DoctorResponse.builder()
-                .doctorReferenceNumber(doctor.getDoctorReferenceNumber())
-                .firstName(doctor.getUser().getFirstName())
-                .lastName(doctor.getUser().getLastName())
-                .degree(doctor.getDegree())
-                .build();
+        final DoctorResponse doctorResponse = new DoctorResponse();
+        doctorResponse.setDoctorReferenceNumber(doctor.getDoctorReferenceNumber());
+        doctorResponse.setFirstName(doctor.getUser().getFirstName());
+        doctorResponse.setLastName(doctor.getUser().getLastName());
+        doctorResponse.setDegree(doctor.getDegree());
+        return doctorResponse;
     }
 
     private Specification<Doctor> searchSpecification(final DoctorSearchRequest doctorSearchRequest) {

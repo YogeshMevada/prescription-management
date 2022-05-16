@@ -4,10 +4,8 @@ import com.google.common.base.Joiner;
 import com.prescription.ui.util.UrlHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +17,7 @@ import java.util.Objects;
 @Slf4j
 public class CustomerFilter implements Filter {
 
-    public static final String BASE64_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+e0r5uXf9SccvmsBBGniEC1EKHYPrpzYA3QgaASbVgHTgcPNLXf5yBdxOhWF9Z5Zj47aAyhJxILD6HFhq3zOHkDrdV9ReIVg07Ez719YS8Lyi9ZachcroEyZmoNttGmzsZk2UX75oSzkDuDb+k7psxCvNDM2vubo8tpRooaoLLwIDAQAB";
+    public static final String BASE64_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQChOv6xMUV/KK10E/oOQsieGNnm/ImYt3PBL7Pmp8z4QI/iOLLWAVqUPq46Xg0W5xsK/xkedWWzbhBcfIIeMOe3NJ239YkYF7DXE31F3+vS8u5tX2BD8/ofj4nr9TleJE3X9kX2mHrxHc3kxPX3GKGDRi4glOR1hHR+pyh3SNiGPwIDAQAB";
     private final UrlHelper urlHelper;
 
     @Autowired

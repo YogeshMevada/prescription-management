@@ -102,10 +102,10 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
             throw new Exception("Invalid prescription reference number");
         }
         if (doctorReferenceNumber.equals(prescription.getDoctor().getDoctorReferenceNumber())) {
-            return ApiResponse.<PrescriptionAccessResponse>builder()
-                    .message("You already have the access to the prescription")
-                    .status(ResponseStatus.SUCCESS)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage("You already have the access to the prescription");
+            apiResponse.setStatus(ResponseStatus.SUCCESS);
+            return apiResponse;
         }
         if (patientReferenceNumber.equals(prescription.getPatient().getPatientReferenceNumber())) {
             log.error("Prescription reference number-{} does not belong to patient-{}", prescriptionReferenceNumber, patientReferenceNumber);
@@ -121,11 +121,11 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
         final PrescriptionAccess savedPrescriptionAccess = prescriptionAccessRepository.save(prescriptionAccess);
 
         log.info("Prescription successfully requested from patient");
-        return ApiResponse.<PrescriptionAccessResponse>builder()
-                .data(map(savedPrescriptionAccess))
-                .message("Prescription successfully requested from patient")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(savedPrescriptionAccess));
+        apiResponse.setMessage("Prescription successfully requested from patient");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
@@ -139,10 +139,10 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
         }
         final PrescriptionAccess prescriptionAccessFound = prescriptionAccessRepository.findByPharmacyReferenceNumberAndPrescriptionReferenceNumber(pharmacyReferenceNumber, prescriptionReferenceNumber, false);
         if (Objects.nonNull(prescriptionAccessFound)) {
-            return ApiResponse.<PrescriptionAccessResponse>builder()
-                    .message("You already have the access to the prescription")
-                    .status(ResponseStatus.SUCCESS)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage("You already have the access to the prescription");
+            apiResponse.setStatus(ResponseStatus.SUCCESS);
+            return apiResponse;
         }
 
         final Patient patient = patientService.validateByReferenceNumber(patientReferenceNumber);
@@ -166,11 +166,11 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
         final PrescriptionAccess savePrescriptionAccess = prescriptionAccessRepository.save(prescriptionAccess);
 
         log.info("Prescription successfully requested from patient");
-        return ApiResponse.<PrescriptionAccessResponse>builder()
-                .data(map(prescriptionAccess))
-                .message("Prescription successfully requested from patient")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(prescriptionAccess));
+        apiResponse.setMessage("Prescription successfully requested from patient");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
@@ -185,22 +185,22 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
         }
         if (patientReferenceNumber.equals(prescriptionAccess.getPatient().getPatientReferenceNumber())) {
             log.error("Invalid prescription-{} for Patient-{}", prescriptionAccess.getPrescription().getPrescriptionReferenceNumber(), accessReferenceNumber);
-            return ApiResponse.<PrescriptionAccessResponse>builder()
-                    .message("Invalid prescription for Patient")
-                    .status(ResponseStatus.ERROR)
-                    .errorCode(ErrorCode.PA001)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage("Invalid prescription for Patient");
+            apiResponse.setStatus(ResponseStatus.ERROR);
+            apiResponse.setErrorCode(ErrorCode.PA001);
+            return apiResponse;
         }
 
         prescriptionAccess.setApproved(true);
         final PrescriptionAccess savedPrescriptionAccess = prescriptionAccessRepository.save(prescriptionAccess);
 
         log.info("Prescription access provided successfully");
-        return ApiResponse.<PrescriptionAccessResponse>builder()
-                .data(map(savedPrescriptionAccess))
-                .message("Prescription access provided successfully")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(savedPrescriptionAccess));
+        apiResponse.setMessage("Prescription access provided successfully");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
@@ -213,12 +213,12 @@ public class PrescriptionAccessServiceImpl implements PrescriptionAccessService 
     }
 
     private PrescriptionAccessResponse map(final PrescriptionAccess prescriptionAccess) {
-        return PrescriptionAccessResponse.builder()
-                .doctorReferenceNumber(Objects.isNull(prescriptionAccess.getDoctor()) ? null : prescriptionAccess.getDoctor().getDoctorReferenceNumber())
-                .patientReferenceNumber(prescriptionAccess.getPatient().getPatientReferenceNumber())
-                .pharmacyReferenceNumber(Objects.isNull(prescriptionAccess.getPharmacist()) ? null : prescriptionAccess.getPharmacist().getPharmacyReferenceNumber())
-                .prescriptionReferenceNumber(prescriptionAccess.getAccessReferenceNumber())
-                .approved(prescriptionAccess.isApproved())
-                .build();
+        final PrescriptionAccessResponse prescriptionAccessResponse = new PrescriptionAccessResponse();
+        prescriptionAccessResponse.setDoctorReferenceNumber(Objects.isNull(prescriptionAccess.getDoctor()) ? null : prescriptionAccess.getDoctor().getDoctorReferenceNumber());
+        prescriptionAccessResponse.setPatientReferenceNumber(prescriptionAccess.getPatient().getPatientReferenceNumber());
+        prescriptionAccessResponse.setPharmacyReferenceNumber(Objects.isNull(prescriptionAccess.getPharmacist()) ? null : prescriptionAccess.getPharmacist().getPharmacyReferenceNumber());
+        prescriptionAccessResponse.setPrescriptionReferenceNumber(prescriptionAccess.getAccessReferenceNumber());
+        prescriptionAccessResponse.setApproved(prescriptionAccess.isApproved());
+        return prescriptionAccessResponse;
     }
 }

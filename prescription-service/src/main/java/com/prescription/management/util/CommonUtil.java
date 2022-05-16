@@ -31,11 +31,12 @@ public class CommonUtil {
         final Pagination pagination = new Pagination();
         pagination.setTotalElements(page.getTotalElements());
         pagination.setTotalPages(pagination.getTotalPages());
-        return PageResponse.<R>builder()
-                .records(page.stream()
-                        .map(mapper)
-                        .collect(Collectors.toSet()))
-                .pagination(pagination)
-                .build();
+
+        final PageResponse pageResponse = new PageResponse();
+        pageResponse.setRecords(page.stream()
+                .map(mapper)
+                .collect(Collectors.toSet()));
+        pageResponse.setPagination(pagination);
+        return pageResponse;
     }
 }

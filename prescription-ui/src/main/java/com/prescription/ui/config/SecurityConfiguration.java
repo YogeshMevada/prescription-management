@@ -7,10 +7,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -26,9 +30,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     private final CustomerFilter customerFilter;
 
-    public SecurityConfiguration(UrlHelper urlHelper) {
+    private final UserDetailsService userDetailsService;
+
+    public SecurityConfiguration(final UrlHelper urlHelper,
+                                 final UserDetailsService userDetailsService) {
         this.urlHelper = urlHelper;
+        this.userDetailsService = userDetailsService;
         this.customerFilter = new CustomerFilter(this.urlHelper);
+    }
+
+    @Override
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
     }
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
@@ -51,7 +65,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
                 .formLogin()
                 .loginPage("/authenticate/login").permitAll()
                 .loginProcessingUrl("/authenticate/processLogin")
-                .defaultSuccessUrl("/authenticate/dashboard")
+                .usernameParameter("loginUsername")
+                .passwordParameter("loginPassword")
+                .defaultSuccessUrl("/authenticate/dashboard", true)
                 .failureUrl("/authenticate/login?error=true")
                 .and()
                 .logout()
@@ -67,5 +83,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/")
                 .setCacheControl(CacheControl.maxAge(3, TimeUnit.HOURS));
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
     }
 }

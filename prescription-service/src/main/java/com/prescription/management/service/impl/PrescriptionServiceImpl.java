@@ -57,15 +57,15 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         log.info("Prescription service - get prescription by prescription reference number");
         final Prescription prescription = prescriptionRepository.findByPrescriptionReferenceNumber(prescriptionReferenceNumber);
         if (Objects.isNull(prescription)) {
-            return ApiResponse.<PrescriptionResponse>builder()
-                    .message(String.format("Prescription for reference-%s number not found", prescriptionReferenceNumber))
-                    .status(ResponseStatus.ERROR)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage(String.format("Prescription for reference-%s number not found", prescriptionReferenceNumber));
+            apiResponse.setStatus(ResponseStatus.ERROR);
+            return apiResponse;
         }
-        return ApiResponse.<PrescriptionResponse>builder()
-                .data(map(prescription))
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(prescription));
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
@@ -157,30 +157,32 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         final Prescription savedPrescription = prescriptionRepository.save(prescription);
 
         log.info("Prescription created successfully");
-        return ApiResponse.<PrescriptionResponse>builder()
-                .data(map(savedPrescription))
-                .message("Prescription created successfully")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(savedPrescription));
+        apiResponse.setMessage("Prescription created successfully");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
     public PrescriptionResponse map(final Prescription prescription) {
-        return PrescriptionResponse.builder()
-                .appointmentNumber(prescription.getAppointmentNumber())
-                .referenceNumber(prescription.getPrescriptionReferenceNumber())
-                .doctorReferenceNumber(prescription.getDoctor().getDoctorReferenceNumber())
-                .patientReferenceNumber(prescription.getPatient().getPatientReferenceNumber())
-                .medicines(prescription.getPrescriptionItems().stream()
-                        .map(prescriptionItem -> MedicineResponse.builder()
-                                .medicineId(prescriptionItem.getMedicine().getId())
-                                .brandName(prescriptionItem.getMedicine().getBrandName())
-                                .activeIngredientName(prescriptionItem.getMedicine().getActiveIngredientName())
-                                .medicineReferenceNumber(prescriptionItem.getMedicine().getMedicineReferenceNumber())
-                                .quantity(prescriptionItem.getQuantity())
-                                .build())
-                        .collect(Collectors.toList()))
-                .build();
+        final PrescriptionResponse prescriptionResponse = new PrescriptionResponse();
+        prescriptionResponse.setAppointmentNumber(prescription.getAppointmentNumber());
+        prescriptionResponse.setReferenceNumber(prescription.getPrescriptionReferenceNumber());
+        prescriptionResponse.setDoctorReferenceNumber(prescription.getDoctor().getDoctorReferenceNumber());
+        prescriptionResponse.setPatientReferenceNumber(prescription.getPatient().getPatientReferenceNumber());
+        prescriptionResponse.setMedicines(prescription.getPrescriptionItems().stream()
+                .map(prescriptionItem -> {
+                    final MedicineResponse medicineResponse = new MedicineResponse();
+                    medicineResponse.setMedicineId(prescriptionItem.getMedicine().getId());
+                    medicineResponse.setBrandName(prescriptionItem.getMedicine().getBrandName());
+                    medicineResponse.setActiveIngredientName(prescriptionItem.getMedicine().getActiveIngredientName());
+                    medicineResponse.setMedicineReferenceNumber(prescriptionItem.getMedicine().getMedicineReferenceNumber());
+                    medicineResponse.setQuantity(prescriptionItem.getQuantity());
+                    return medicineResponse;
+                })
+                .collect(Collectors.toList()));
+        return prescriptionResponse;
     }
 
     private PrescriptionItem map(final MedicineRequest medicineRequest, final Medicine medicine) {
@@ -194,11 +196,11 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         if (doctorReferenceNumber.equals(prescription.getDoctor().getDoctorReferenceNumber())) {
             return map(prescription);
         }
-        return PrescriptionResponse.builder()
-                .appointmentNumber(prescription.getAppointmentNumber())
-                .referenceNumber(prescription.getPrescriptionReferenceNumber())
-                .doctorReferenceNumber(prescription.getDoctor().getDoctorReferenceNumber())
-                .patientReferenceNumber(prescription.getPatient().getPatientReferenceNumber())
-                .build();
+        final PrescriptionResponse prescriptionResponse = new PrescriptionResponse();
+        prescriptionResponse.setAppointmentNumber(prescription.getAppointmentNumber());
+        prescriptionResponse.setReferenceNumber(prescription.getPrescriptionReferenceNumber());
+        prescriptionResponse.setDoctorReferenceNumber(prescription.getDoctor().getDoctorReferenceNumber());
+        prescriptionResponse.setPatientReferenceNumber(prescription.getPatient().getPatientReferenceNumber());
+        return prescriptionResponse;
     }
 }

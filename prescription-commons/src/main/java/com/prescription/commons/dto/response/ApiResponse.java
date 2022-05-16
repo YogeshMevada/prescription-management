@@ -2,11 +2,9 @@ package com.prescription.commons.dto.response;
 
 import com.prescription.commons.constant.ErrorCode;
 import com.prescription.commons.constant.ResponseStatus;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-@Builder
-@Getter
+@Data
 public class ApiResponse<T> {
 
     private T data;

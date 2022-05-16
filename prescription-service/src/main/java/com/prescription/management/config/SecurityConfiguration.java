@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
@@ -34,15 +33,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     private final JwtRequestFilter jwtRequestFilter;
 
-    private final String allowedDomains;
-
     @Autowired
     public SecurityConfiguration(final UserDetailsService userDetailsService,
-                                 final JwtRequestFilter jwtRequestFilter,
-                                 @Value("${service.domain.allowed}") final String allowedDomains) {
+                                 final JwtRequestFilter jwtRequestFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
-        this.allowedDomains = allowedDomains;
     }
 
     @Override
@@ -77,8 +72,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     @Bean
     public CorsConfigurationSource corsConfigurationSource(@Value("${service.domain.allowed}") final String allowedDomains) {
         final CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.setAllowedOrigins(Arrays.asList(allowedDomains));
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:8081"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList(allowedDomains));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         corsConfiguration.setMaxAge(3600l);
         corsConfiguration.setAllowCredentials(true);
@@ -87,16 +81,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
         cors.registerCorsConfiguration("/**", corsConfiguration);
         return cors;
     }
-
-    /*@Override
-    public void addCorsMappings(final CorsRegistry registry) {
-        registry.addMapping("/**")
-//                .allowedOrigins(allowedDomains)
-                .allowedOrigins("http://localhost:8080")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .maxAge(3600l)
-                .allowCredentials(true)
-                .exposedHeaders("Authorization");
-//                .allowedHeaders("*");
-    }*/
 }

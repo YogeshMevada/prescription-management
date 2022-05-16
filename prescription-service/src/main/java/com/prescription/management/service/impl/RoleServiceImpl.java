@@ -44,15 +44,15 @@ public class RoleServiceImpl implements RoleService {
         final Role role = roleRepository.findById(roleId).orElse(null);
         if (Objects.isNull(role)) {
             log.error("Role not found");
-            return ApiResponse.<RoleResponse>builder()
-                    .message("Role not found")
-                    .status(ResponseStatus.ERROR)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage("Role not found");
+            apiResponse.setStatus(ResponseStatus.ERROR);
+            return apiResponse;
         }
-        return ApiResponse.<RoleResponse>builder()
-                .data(map(role))
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(role));
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
@@ -79,11 +79,11 @@ public class RoleServiceImpl implements RoleService {
         final Role savedRole = roleRepository.save(role);
 
         log.info("Role created successfully");
-        return ApiResponse.<RoleResponse>builder()
-                .data(map(savedRole))
-                .message("Role created successfully")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(savedRole));
+        apiResponse.setMessage("Role created successfully");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
@@ -95,28 +95,28 @@ public class RoleServiceImpl implements RoleService {
             throw new Exception("Role not present");
         }
         if (role.getStatus().equals(updateRoleRequest.getStatus())) {
-            return ApiResponse.<RoleResponse>builder()
-                    .message("Role status is already same")
-                    .status(ResponseStatus.ERROR)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage("Role status is already same");
+            apiResponse.setStatus(ResponseStatus.ERROR);
+            return apiResponse;
         }
         if (Objects.nonNull(updateRoleRequest.getStatus()))
             role.setStatus(updateRoleRequest.getStatus());
         final Role savedRole = roleRepository.save(role);
 
         log.info("Role updated successfully");
-        return ApiResponse.<RoleResponse>builder()
-                .data(map(savedRole))
-                .message("Role updated successfully")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(savedRole));
+        apiResponse.setMessage("Role updated successfully");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     private RoleResponse map(final Role role) {
-        return RoleResponse.builder()
-                .id(role.getId())
-                .name(role.getName())
-                .status(role.getStatus())
-                .build();
+        final RoleResponse roleResponse = new RoleResponse();
+        roleResponse.setId(role.getId());
+        roleResponse.setName(role.getName());
+        roleResponse.setStatus(role.getStatus());
+        return roleResponse;
     }
 }

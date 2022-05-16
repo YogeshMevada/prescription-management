@@ -56,10 +56,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         userService.registerNewUser(users, registrationRequest.getUserType());
 
         log.info("User registration successful");
-        return ApiResponse.builder()
-                .message("User registration successful")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setMessage("User registration successful");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     private Users map(final RegistrationRequest registrationRequest) {

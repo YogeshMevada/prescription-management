@@ -1,12 +1,10 @@
 package com.prescription.commons.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.List;
 
-@Builder
-@Getter
+@Data
 public class PrescriptionResponse {
 
     private String appointmentNumber;

@@ -1,6 +1,7 @@
 package com.prescription.management.service.impl;
 
 import com.prescription.commons.constant.Status;
+import com.prescription.management.entities.Role;
 import com.prescription.management.entities.Users;
 import com.prescription.management.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,11 +33,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         log.info("Inside Load User by Username.");
         final Users user = userService.findUserByName(username);
-        return new User(username, user.getPassword(), getAuthorities(user));
+        return new User(username, user.getPassword(), getAuthorities(user.getRoles()));
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(final Users user) {
-        return user.getRoles().stream()
+    private Collection<? extends GrantedAuthority> getAuthorities(final Set<Role> roles) {
+        return roles.stream()
                 .filter(role -> Status.ACTIVE.equals(role.getStatus()))
                 .map(role -> {
                     String name = role.getName();

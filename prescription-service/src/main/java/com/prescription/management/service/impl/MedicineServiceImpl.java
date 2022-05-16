@@ -39,15 +39,15 @@ public class MedicineServiceImpl implements MedicineService {
         final Medicine medicine = medicineRepository.findByMedicineReferenceNumber(medicineReferenceNumber);
         if (Objects.isNull(medicine)) {
             log.error("No medicine found for reference number-{}", medicineReferenceNumber);
-            return ApiResponse.<MedicineResponse>builder()
-                    .message(String.format("No medicine found for reference number-%s", medicineReferenceNumber))
-                    .status(ResponseStatus.ERROR)
-                    .build();
+            final ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setMessage(String.format("No medicine found for reference number-%s", medicineReferenceNumber));
+            apiResponse.setStatus(ResponseStatus.ERROR);
+            return apiResponse;
         }
-        return ApiResponse.<MedicineResponse>builder()
-                .data(map(medicine))
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(medicine));
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     @Override
@@ -79,11 +79,11 @@ public class MedicineServiceImpl implements MedicineService {
         final Medicine savedMedicine = medicineRepository.save(medicine);
 
         log.info("Medicine created successfully");
-        return ApiResponse.<MedicineResponse>builder()
-                .data(map(savedMedicine))
-                .message("Medicine created successfully")
-                .status(ResponseStatus.SUCCESS)
-                .build();
+        final ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(map(savedMedicine));
+        apiResponse.setMessage("Medicine created successfully");
+        apiResponse.setStatus(ResponseStatus.SUCCESS);
+        return apiResponse;
     }
 
     private Medicine map(final AddMedicineRequest addMedicineRequest) {
@@ -97,14 +97,14 @@ public class MedicineServiceImpl implements MedicineService {
     }
 
     private MedicineResponse map(final Medicine medicine) {
-        return MedicineResponse.builder()
-                .medicineId(medicine.getId())
-                .medicineReferenceNumber(medicine.getMedicineReferenceNumber())
-                .brandName(medicine.getBrandName())
-                .activeIngredientName(medicine.getActiveIngredientName())
-                .quantity(medicine.getQuantity())
-                .unit(medicine.getUnit().getSymbol())
-                .build();
+        final MedicineResponse medicineResponse = new MedicineResponse();
+        medicineResponse.setMedicineId(medicine.getId());
+        medicineResponse.setMedicineReferenceNumber(medicine.getMedicineReferenceNumber());
+        medicineResponse.setBrandName(medicine.getBrandName());
+        medicineResponse.setActiveIngredientName(medicine.getActiveIngredientName());
+        medicineResponse.setQuantity(medicine.getQuantity());
+        medicineResponse.setUnit(medicine.getUnit().getSymbol());
+        return medicineResponse;
     }
 
     private Specification<Medicine> searchSpecification(final MedicineSearchRequest medicineSearchRequest) {
